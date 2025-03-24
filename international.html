@@ -1,45 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <title>My Voyages</title>
+    <title>My Voyages - International</title>
+    <link rel="icon" href="assets/pics/icon.png" type="image/png">
 </head>
-
 <body>
-    <header style="background: url(Pics/international_cover.jpg) center/cover no-repeat;">
-        <h1 style="color: rgb(0, 0, 0);">My Voyages</h1>
-		<p style="font-size: 25px;color: rgb(0, 0, 0);"> Trendzzz around the world!</p>
-		<a href="index.html" style="color: rgb(4, 0, 255); text-decoration: none;">Go to Homepage</a>
+    <header style="background: url(assets/pics/international_cover.jpg) center/cover no-repeat;">
+        <h1>My Voyages</h1>
+        <p>Global Swagger (Coming Soon)</p>
+        <nav class="navbar">
+            <div class="menu-icon" onclick="toggleMenu()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div class="menu">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="local.html">Local</a>
+                <a href="interstate.html">Interstate</a>
+                <a href="international.html">International</a>
+            </div>
+        </nav>
     </header>
-
-	<div class="video">
-		<video controls width="100%">
-			<source src="Pics/adhula.mp4" type="video/mp4">
-		</video>
-		<!-- Add your photo and video gallery here -->
-	</div>
-	<div class="tours">
-        <div class="story">
-            <h2>Hooray !!!</h2>
-            <p>Wanna Travel more like a air!</p>
-            <!-- Add your travel stories here -->
+    <div class="body">
+        <div class="trip-log">
+            <div class="trip-entry">
+                <h2>Placeholder Vibes</h2>
+                <p>March 24, 2025 - Nowhere Yet</p>
+                <div class="media">
+                    <video controls><source src="assets/pics/adhula.mp4" type="video/mp4"></video>
+                </div>
+                <div class="story">
+                    <p>No passport stamps yet—just a meme to hold the spot. World, I’m coming!</p>
+                </div>
+            </div>
+            <!-- Add international trips here -->
         </div>
     </div>
-	<section>
-		<img src="Pics/intern.jpeg" alt="intern" style="justify-content: center;">
-	</section>
-
     <footer>
-        <p>&copy; 2024 Your Travel Page. All rights reserved.</p>
+        <p>© 2025 My Voyages. All rights reserved.</p>
     </footer>
+    <script src="assets/js/script.js"></script>
 </body>
-
 </html>
-
-
-
