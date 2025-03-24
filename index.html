@@ -1,69 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
     <title>My Voyages</title>
-    <link rel="icon" href="Pics/icon.png" type="image/icon type">
+    <link rel="icon" href="assets/pics/icon.png" type="image/png">
 </head>
-
 <body>
-    <header>
+    <header style="background: url(assets/pics/namakkal_armoury_cut.jpg) center/cover no-repeat;">
         <h1>My Voyages</h1>
-        <p style="font-size: 25px;"> Explore my travel experiences, photos, videos, and stories</p>
-        <div class="navbar">
+        <p>A Swagger-Fueled Odyssey Across Borders and Backyards</p>
+        <nav class="navbar">
             <div class="menu-icon" onclick="toggleMenu()">
                 <div class="line"></div>
                 <div class="line"></div>
                 <div class="line"></div>
             </div>
             <div class="menu">
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Gallery</a>
-                <a href="#">Contact</a>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="local.html">Local</a>
+                <a href="interstate.html">Interstate</a>
+                <a href="international.html">International</a>
             </div>
-            <div class="signup">
-                <a href="#">Sign Up</a>
-            </div>
-        </div>
+        </nav>
     </header>
-
     <div class="body">
         <div class="heading">
-            <h1 style="color: black;">Travel With Us</h1>
-            <p>ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
-            <a href="#footer">Click to Swipe</a>
+            <h1>Explore My Trails</h1>
+            <p>From local haunts to global jaunts, every step’s a story.</p>
         </div>
         <div class="tours_home">
             <div class="places">
-                <h2>Local</h2>
-                <img src="Pics/Local.jpg" alt="Local">
-                <a href="local.html">View</a>
+                <h2>Local Vibes</h2>
+                <img src="assets/pics/Local.jpg" alt="Local Scene">
+                <a href="local.html">Dive In</a>
             </div>
             <div class="places">
-                <h2>Inter-State</h2>
-                <img src="Pics/Inter-State.jpg" alt="New York">
-                <a href="interstate.html">View</a>
+                <h2>Interstate Runs</h2>
+                <img src="assets/pics/Inter-State.jpg" alt="Interstate Adventure">
+                <a href="interstate.html">Dive In</a>
             </div>
             <div class="places">
-                <h2>International</h2>
-                <img src="Pics/International.jpg" alt="Thailand">
-                <a href="international.html">View</a>
+                <h2>Global Quests</h2>
+                <img src="assets/pics/International.jpg" alt="Global Journey">
+                <a href="international.html">Dive In</a>
             </div>
         </div>
     </div>
-
-   
-    <footer id="footer">
-        <p>&copy; 2024 My Voyages. All rights reserved.</p>
+    <footer>
+        <p>© 2025 My Voyages. All rights reserved.</p>
     </footer>
-    <script src="script.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
-
 </html>
