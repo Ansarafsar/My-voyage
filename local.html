@@ -1,57 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <title>My Voyages</title>
+    <title>My Voyages - Local</title>
+    <link rel="icon" href="assets/pics/icon.png" type="image/png">
 </head>
-
 <body>
-    <header style="background: url(Pics/vala_cut.jpg) center/cover no-repeat;">
-        <h1 style="color: rgb(0, 0, 0);">My Voyages</h1>
-		<p style="font-size: 25px;color: rgb(255, 255, 255);"> Explore the flavor of Local!</p>
-		<a href="index.html" style="color: rgb(4, 0, 255); text-decoration: none;">Go to Homepage</a>
+    <header style="background: url(assets/pics/vala_cut.jpg) center/cover no-repeat;">
+        <h1>My Voyages</h1>
+        <p>Local Legends and Hidden Gems</p>
+        <nav class="navbar">
+            <div class="menu-icon" onclick="toggleMenu()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div class="menu">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="local.html">Local</a>
+                <a href="interstate.html">Interstate</a>
+                <a href="international.html">International</a>
+            </div>
+        </nav>
     </header>
-	<div class="tours">
-        <div class="places">
-            <img src="C:\Users\HP\Pictures\IMG_20230813_165355_855.jpg" alt="Jarugumalai">
-            <!-- Add your photo and video gallery here -->
+    <div class="body">
+        <div class="trip-log">
+            <!-- New Trip Entry -->
+            <div class="trip-entry">
+                <h2>Jarugumalai Sunrise</h2>
+                <p>August 13, 2023 - Salem</p>
+                <div class="media">
+                    <img src="assets/pics/IMG_20230813_165355_855.jpg" alt="Jarugumalai">
+                </div>
+                <div class="story">
+                    <p>Sunrise in Salem hit different—hopped on a Thunderbird and rode to Jarugumalai. Small hamlet, big vibes.</p>
+                </div>
+            </div>
+            <!-- Another Trip Entry -->
+            <div class="trip-entry">
+                <h2>Oothumalai Trek</h2>
+                <p>December 22, 2022 - Somewhere Local</p>
+                <div class="media">
+                    <img src="assets/pics/IMG20221222075216.jpg" alt="Oothumalai">
+                </div>
+                <div class="story">
+                    <p>Rolling through the hills, chasing ridges and tales. Pure local chaos.</p>
+                </div>
+            </div>
+            <!-- Add more trips here -->
         </div>
-
-        <div class="story">
-            <h2>Amazing Encounter</h2>
-            <p>When it was the sunrise time in Salem, I got a bike ride in a Thunderbird to go to Jarugumalai, a small hamlet in Salem</p>
-            <!-- Add your travel stories here -->
-        </div>
-
-        <div class="places">
-            <img src="C:\Users\HP\Pictures\IMG20221222075216.jpg" alt="oothumalai">
-        </div>
-
-        <div class="story">
-            <h2>Adventures in the Mountains</h2>
-            <p>Another travel story...</p>
-        </div>
-
-		<div class="places">
-			<img src="Pics/Pudhu eri.jpg" alt="wanderer">
-		</div>
-		<div class="story">
-			<h2>Goin' Around</h2>
-			<p>An another travel story of a wanderer..</p>
-		</div>
     </div>
-
     <footer>
-        <p>&copy; 2024 Your Travel Page. All rights reserved.</p>
+        <p>© 2025 My Voyages. All rights reserved.</p>
     </footer>
+    <script src="assets/js/script.js"></script>
 </body>
-
 </html>
-
-
-
