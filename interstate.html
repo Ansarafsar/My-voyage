@@ -1,57 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <title>My Voyages</title>
+    <title>My Voyages - Interstate</title>
+    <link rel="icon" href="assets/pics/icon.png" type="image/png">
 </head>
-
 <body>
-    <header style="background: url(Pics/cochi_cover.jpg) center/cover no-repeat;">
-        <h1 style="color: rgb(73, 70, 252);">My Voyages</h1>
-		<p style="font-size: 25px;color: rgb(255, 255, 255);"> Explore the unexplored culture !</p>
-		<a href="index.html" style="color: rgb(4, 0, 255); text-decoration: none;">Go to Homepage</a>
+    <header style="background: url(assets/pics/cochi_cover.jpg) center/cover no-repeat;">
+        <h1>My Voyages</h1>
+        <p>Interstate Escapades</p>
+        <nav class="navbar">
+            <div class="menu-icon" onclick="toggleMenu()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div class="menu">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="local.html">Local</a>
+                <a href="interstate.html">Interstate</a>
+                <a href="international.html">International</a>
+            </div>
+        </nav>
     </header>
-	<div class="tours">
-        <div class="places">
-            <img src="Pics/cochi_me.jpg" alt="cochi_me">
-            <!-- Add your photo and video gallery here -->
+    <div class="body">
+        <div class="trip-log">
+            <div class="trip-entry">
+                <h2>Fort Kochi Noon</h2>
+                <p>[Date] - Kochi</p>
+                <div class="media">
+                    <img src="assets/pics/cochi_me.jpg" alt="Fort Kochi">
+                </div>
+                <div class="story">
+                    <p>Sunny noon at Fort Kochi—rail, metro, diesel boats, and a beach worth the hustle.</p>
+                </div>
+            </div>
+            <div class="trip-entry">
+                <h2>Palakkad Fort</h2>
+                <p>[Date] - Palakkad</p>
+                <div class="media">
+                    <img src="assets/pics/palakkad_fort.jpg" alt="Palakkad Fort">
+                </div>
+                <div class="story">
+                    <p>Stepped into Tipu’s history at Palakkad—forts don’t get old, they get epic.</p>
+                </div>
+            </div>
+            <!-- Add more interstate trips here -->
         </div>
-
-        <div class="story">
-            <h2>Pleasing to eyes</h2>
-            <p>It was a sunny noon when I reached Fort Kochi beach through multiple modes of transport like Rail, Metro, Diesel Boats..</p>
-            <!-- Add your travel stories here -->
-        </div>
-
-        <div class="places">
-            <img src="Pics/palakkad_fort.jpg" alt="palakkad_fort">
-        </div>
-
-        <div class="story">
-            <h2>Revamping th History</h2>
-            <p>Visited the historical fort of Tipu at Palakkad City in Kerala...</p>
-        </div>
-
-		<div class="places">
-			<img src="Pics/calicut_me.jpg" alt="calicut_me">
-		</div>
-		<div class="story">
-			<h2>Unplanned and Unforgettable</h2>
-			<p>As of a sudden trip, I was off to Kozhikkode (a) Calicut, where the Voyager Vasco-da-Gama's ship reached Indian Subcontinent</p>
-		</div>
     </div>
-
     <footer>
-        <p>&copy; 2024 Your Travel Page. All rights reserved.</p>
+        <p>© 2025 My Voyages. All rights reserved.</p>
     </footer>
+    <script src="assets/js/script.js"></script>
 </body>
-
 </html>
-
-
-
