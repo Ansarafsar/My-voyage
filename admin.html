@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Admin Panel - My Voyages</title>
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .admin-header {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .admin-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn {
+            background: #ff0000;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #cc0000;
+        }
+        .btn-secondary {
+            background: #007bff;
+        }
+        .btn-secondary:hover {
+            background: #0056b3;
+        }
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .story-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .story-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .error-message {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+        .success-message {
+            background: #51cf66;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+        .google-drive-converter {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>My Voyages - Admin Panel</h1>
+            <p>Manage your travel stories and content</p>
+        </div>
+
+        <div id="login-section" class="admin-section">
+            <h2>Admin Login</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button type="button" class="btn" onclick="login()">Login</button>
+            <div id="login-error" class="error-message"></div>
+        </div>
+
+        <div id="admin-section" class="hidden">
+            <div class="admin-section">
+                <h2>Story Management</h2>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" onclick="showAddForm()">Add New Story</button>
+                    <button type="button" class="btn btn-secondary" onclick="loadStories()">Refresh Stories</button>
+                    <button type="button" class="btn" onclick="logout()" style="float: right; background: #6c757d;">Logout</button>
+                </div>
+            </div>
+
+            <div id="add-story-form" class="admin-section hidden">
+                <h3>Add New Story</h3>
+                <div class="form-group">
+                    <label for="story-title">Title:</label>
+                    <input type="text" id="story-title" placeholder="Enter story title">
+                </div>
+                <div class="form-group">
+                    <label for="story-category">Category:</label>
+                    <select id="story-category">
+                        <option value="local">Local</option>
+                        <option value="interstate">Inter-State</option>
+                        <option value="international">International</option>
+                        <option value="speechless_people">Speechless People</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="story-content">Story Content:</label>
+                    <textarea id="story-content" rows="5" placeholder="Enter your travel story"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="story-image">Image URL (Google Drive):</label>
+                    <input type="text" id="story-image" placeholder="Paste Google Drive image URL">
+                    <div class="google-drive-converter">
+                        <p><strong>Google Drive URL Converter:</strong></p>
+                        <input type="text" id="google-drive-url" placeholder="Paste any Google Drive shareable link">
+                        <button type="button" class="btn btn-secondary" onclick="convertGoogleDriveUrl()">Convert to Direct Link</button>
+                        <p><small>After conversion, the direct link will automatically fill the Image URL field</small></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="story-location">Location:</label>
+                    <input type="text" id="story-location" placeholder="Enter location (optional)">
+                </div>
+                <div class="form-group">
+                    <label for="story-date">Travel Date:</label>
+                    <input type="date" id="story-date">
+                </div>
+                <button type="button" class="btn" onclick="addStory()">Add Story</button>
+                <button type="button" class="btn btn-secondary" onclick="hideAddForm()">Cancel</button>
+                <div id="add-error" class="error-message"></div>
+                <div id="add-success" class="success-message"></div>
+            </div>
+
+            <div class="admin-section">
+                <h3>Existing Stories</h3>
+                <div id="stories-container" class="stories-grid">
+                    <p>Click "Refresh Stories" to load your travel stories</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

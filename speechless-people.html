@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>My Voyages</title>
+</head>
+
+<body>
+    <header style="background: url(Pics/vala_cut.jpg) center/cover no-repeat;">
+        <h1 style="color: rgb(0, 0, 0);">My Voyages</h1>
+		<p style="font-size: 25px;color: rgb(255, 255, 255);"> Beautiful souls met on my journeys!</p>
+		<a href="index.html" style="color: rgb(4, 0, 255); text-decoration: none;">Go to Homepage</a>
+    </header>
+	<div class="tours" id="dynamic-stories-container">
+        <!-- Dynamic stories will be loaded here by story-loader.js -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Your Travel Page. All rights reserved.</p>
+    </footer>
+
+    <!-- Dynamic Story Loading Scripts -->
+    <script src="supabase-config.js"></script>
+    <script src="story-loader.js"></script>
+</body>
+
+</html>

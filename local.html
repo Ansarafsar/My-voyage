@@ -16,42 +16,17 @@
 		<p style="font-size: 25px;color: rgb(255, 255, 255);"> Explore the flavor of Local!</p>
 		<a href="index.html" style="color: rgb(4, 0, 255); text-decoration: none;">Go to Homepage</a>
     </header>
-	<div class="tours">
-        <div class="places">
-            <img src="C:\Users\HP\Pictures\IMG_20230813_165355_855.jpg" alt="Jarugumalai">
-            <!-- Add your photo and video gallery here -->
-        </div>
-
-        <div class="story">
-            <h2>Amazing Encounter</h2>
-            <p>When it was the sunrise time in Salem, I got a bike ride in a Thunderbird to go to Jarugumalai, a small hamlet in Salem</p>
-            <!-- Add your travel stories here -->
-        </div>
-
-        <div class="places">
-            <img src="C:\Users\HP\Pictures\IMG20221222075216.jpg" alt="oothumalai">
-        </div>
-
-        <div class="story">
-            <h2>Adventures in the Mountains</h2>
-            <p>Another travel story...</p>
-        </div>
-
-		<div class="places">
-			<img src="Pics/Pudhu eri.jpg" alt="wanderer">
-		</div>
-		<div class="story">
-			<h2>Goin' Around</h2>
-			<p>An another travel story of a wanderer..</p>
-		</div>
+	<div class="tours" id="dynamic-stories-container">
+        <!-- Dynamic stories will be loaded here by story-loader.js -->
     </div>
 
     <footer>
         <p>&copy; 2024 Your Travel Page. All rights reserved.</p>
     </footer>
+
+    <!-- Dynamic Story Loading Scripts -->
+    <script src="supabase-config.js"></script>
+    <script src="story-loader.js"></script>
 </body>
 
 </html>
-
-
-
