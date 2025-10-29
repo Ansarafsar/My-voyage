@@ -72,7 +72,7 @@ class SupabaseClient {
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
-            b    ody: JSON.stringify(requestBody)
+                body: JSON.stringify(requestBody)
             });
 
             const responseData = await response.json();
