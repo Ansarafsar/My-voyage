@@ -1,4 +1,4 @@
-// Admin Panel JavaScript
+// Admin Panel JavaScript with Edge Function Integration
 
 let currentUser = null;
 
@@ -22,7 +22,7 @@ function login() {
         return;
     }
     
-    // Validate credentials using Supabase
+    // Validate credentials using Edge Function ONLY
     supabase.validateCredentials(username, password)
         .then(isValid => {
             if (isValid) {
@@ -144,7 +144,8 @@ function addStory() {
         created_at: new Date().toISOString()
     };
     
-    supabase.createStory(storyData)
+    // Use Edge Function to add story ONLY
+    supabase.createStory(storyData, currentUser)
         .then(result => {
             showSuccess(successDiv, 'Story added successfully!');
             hideAddForm();
@@ -159,8 +160,11 @@ function loadStories() {
     const container = document.getElementById('stories-container');
     container.innerHTML = '<p>Loading stories...</p>';
     
+    // Use Edge Function to get stories
     supabase.getStories()
-        .then(stories => {
+        .then(data => {
+            const stories = data.stories || [];
+            
             if (stories.length === 0) {
                 container.innerHTML = '<p>No stories found. Add your first story!</p>';
                 return;
@@ -197,7 +201,8 @@ function deleteStory(id) {
         return;
     }
     
-    supabase.deleteStory(id)
+    // Use Edge Function to delete story ONLY
+    supabase.deleteStory(id, currentUser)
         .then(() => {
             loadStories();
             alert('Story deleted successfully!');

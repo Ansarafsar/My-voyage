@@ -2,45 +2,17 @@
 // Replace these values with your actual Supabase project details
 const SUPABASE_CONFIG = {
     url: "https://dsrchxpktgkryqkryqok.supabase.co", 
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcmNoeHBrdGdrcnlxa3J5cW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MDI2NDUsImV4cCI6MjA3NzA3ODY0NX0.pKdhZ0boPTFMchJbyzHkNeH0Jx04K3bnzJW2bElgQ4o", // Your anonymous/public key
-    //serviceRoleKey: process.env.SUPA_SERVICEROLE_KEY 
-    serviceRoleKey: null
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcmNoeHBrdGdrcnlxa3J5cW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MDI2NDUsImV4cCI6MjA3NzA3ODY0NX0.pKdhZ0boPTFMchJbyzHkNeH0Jx04K3bnzJW2bElgQ4o",
+    // Edge Function URL
+    edgeFunctionUrl: "https://dsrchxpktgkryqkryqok.supabase.co/functions/v1/admin-stories"
 };
 
-// Simple Supabase client setup
+// Simple Supabase client setup for public operations (reading data)
 class SupabaseClient {
     constructor(config) {
         this.url = config.url;
         this.anonKey = config.anonKey;
-        this.serviceKey = config.serviceRoleKey;
-    }
-
-    // Make authenticated requests (for admin operations)
-    async request(endpoint, options = {}) {
-        const url = `${this.url}${endpoint}`;
-        const headers = {
-            'Content-Type': 'application/json',
-            'apikey': this.serviceKey,
-            'Authorization': `Bearer ${this.serviceKey}`,
-            ...options.headers
-        };
-
-        try {
-            const response = await fetch(url, {
-                ...options,
-                headers
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error?.message || 'Request failed');
-            }
-
-            return data;
-        } catch (error) {
-            console.error('Supabase request failed:', error);
-            throw error;
-        }
+        this.edgeFunctionUrl = config.edgeFunctionUrl;
     }
 
     // Make public requests (for reading data)
@@ -71,58 +43,69 @@ class SupabaseClient {
         }
     }
 
-    // Stories CRUD operations
-    async getStories(category = null, limit = null, offset = null) {
-        let endpoint = '/rest/v1/travel_stories?select=*&order=created_at.desc';
-        if (category) {
-            endpoint += `&category=eq.${category}`;
-        }
-        if (limit) {
-            endpoint += `&limit=${limit}`;
-        }
-        if (offset) {
-            endpoint += `&offset=${offset}`;
-        }
-        return this.publicRequest(endpoint);
-    }
-
-    async createStory(storyData) {
-        return this.request('/rest/v1/travel_stories', {
-            method: 'POST',
-            body: JSON.stringify(storyData)
-        });
-    }
-
-    async updateStory(id, storyData) {
-        return this.request(`/rest/v1/travel_stories?id=eq.${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify(storyData)
-        });
-    }
-
-    async deleteStory(id) {
-        return this.request(`/rest/v1/travel_stories?id=eq.${id}`, {
-            method: 'DELETE'
-        });
-    }
-
-    // Simple authentication check (optional)
-    async validateCredentials(username, password) {
-        // This is a simple demo - in production, use proper Supabase Auth
-        // For now, we'll use a simple hardcoded check
-        const validCredentials = {
-            'admin': 'admin123' // Change this password!
+    // Make requests to Edge Function (for admin operations)
+    async edgeFunctionRequest(action, data = {}, credentials = {}) {
+        const url = this.edgeFunctionUrl;
+        const headers = {
+            'Content-Type': 'application/json',
         };
-        
-        return validCredentials[username] === password;
+
+        const requestBody = {
+            action,
+            ...data
+        };
+
+        // Add credentials for all operations except getStories
+        if (action !== 'getStories' && credentials.username && credentials.password) {
+            requestBody.username = credentials.username;
+            requestBody.password = credentials.password;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(requestBody)
+            });
+
+            const responseData = await response.json();
+            if (!response.ok) {
+                throw new Error(responseData.error || 'Request failed');
+            }
+
+            return responseData;
+        } catch (error) {
+            console.error('Edge Function request failed:', error);
+            throw error;
+        }
     }
 
-    // Change password
-    async changePassword(username, newPassword) {
-        // In production, this would update the user in your auth system
-        // For demo purposes, we'll just update a config
-        console.log(`Password changed for user: ${username}`);
-        return { success: true };
+    // Stories CRUD operations using Edge Function
+    async getStories(category = null) {
+        return this.edgeFunctionRequest('getStories', { category });
+    }
+
+    async createStory(storyData, credentials) {
+        return this.edgeFunctionRequest('addStory', { data: storyData }, credentials);
+    }
+
+    async updateStory(id, storyData, credentials) {
+        return this.edgeFunctionRequest('updateStory', { data: { id, ...storyData } }, credentials);
+    }
+
+    async deleteStory(id, credentials) {
+        return this.edgeFunctionRequest('deleteStory', { data: { id } }, credentials);
+    }
+
+    // Simple authentication check (no hardcoded password)
+    async validateCredentials(username, password) {
+        try {
+            const response = await this.edgeFunctionRequest('validateCredentials', { username, password });
+            return response.success;
+        } catch (error) {
+            console.error('Authentication failed:', error.message);
+            return false;
+        }
     }
 }
 
@@ -174,4 +157,3 @@ function convertGoogleDriveUrl(driveUrl) {
     // Return original URL if no conversion possible
     return driveUrl;
 }
-

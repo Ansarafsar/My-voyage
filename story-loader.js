@@ -1,50 +1,50 @@
 // Dynamic Story Loader for Category Pages with Pagination
-// This script dynamically loads stories from Supabase database
+// This script dynamically loads stories from Supabase Edge Function
 
-let currentSupabase;
 let currentPage = 1;
 const storiesPerPage = 6; // Number of stories per page
 
-// Initialize Supabase client
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL_HERE') {
-        currentSupabase = new SupabaseClient(SUPABASE_CONFIG);
-        
-        // Get page from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        currentPage = parseInt(urlParams.get('page')) || 1;
-        
-        loadCategoryStories();
-        setupPagination();
-    } else {
-        console.warn('Supabase not configured or stories container not found');
-    }
+    // Get page from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    currentPage = parseInt(urlParams.get('page')) || 1;
+    
+    loadCategoryStories();
+    setupPagination();
 });
 
 function loadCategoryStories() {
     const category = getCategoryFromUrl();
     const container = document.getElementById('dynamic-stories-container');
     
-    if (!container || !currentSupabase) {
-        console.log('Container or Supabase not available');
+    if (!container) {
+        console.log('Container not found');
         return;
     }
     
     // Show loading state
     container.innerHTML = '<div style="text-align: center; padding: 20px;"><p>Loading stories...</p></div>';
     
-    // Load all stories for this category to get total count
-    currentSupabase.getStories(category)
-        .then(allStories => {
-            const totalCount = allStories.length;
+    // Load stories using Edge Function
+    supabase.getStories(category)
+        .then(data => {
+            const allStories = data.stories || [];
+            
+            // Filter stories by category
+            const categoryStories = category ? 
+                allStories.filter(story => story.category === category) : 
+                allStories;
+                
+            const totalCount = categoryStories.length;
             const totalPages = Math.ceil(totalCount / storiesPerPage);
             
             // Calculate pagination
             const startIndex = (currentPage - 1) * storiesPerPage;
             const endIndex = startIndex + storiesPerPage;
-            const stories = allStories.slice(startIndex, endIndex);
+            const stories = categoryStories.slice(startIndex, endIndex);
             
-            if (allStories.length === 0) {
+            if (categoryStories.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
                         <h3 style="color: #6c757d;">No stories yet!</h3>
