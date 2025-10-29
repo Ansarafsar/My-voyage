@@ -1,9 +1,10 @@
 // Supabase Configuration
 // Replace these values with your actual Supabase project details
 const SUPABASE_CONFIG = {
-    url: process.env.SUPA_URL, // e.g., 'https://xyzcompany.supabase.co'
-    anonKey: process.env.SUPA_ANON_KEY, // Your anonymous/public key
-    serviceRoleKey: process.env.SUPA_SERVICEROLE_KEY // Your service role key (keep this secret!)
+    url: "https://dsrchxpktgkryqkryqok.supabase.co", 
+    anonKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcmNoeHBrdGdrcnlxa3J5cW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MDI2NDUsImV4cCI6MjA3NzA3ODY0NX0.pKdhZ0boPTFMchJbyzHkNeH0Jx04K3bnzJW2bElgQ4o, // Your anonymous/public key
+    //serviceRoleKey: process.env.SUPA_SERVICEROLE_KEY 
+    serviceRoleKey: null
 };
 
 // Simple Supabase client setup
