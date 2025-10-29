@@ -2,7 +2,7 @@
 // Replace these values with your actual Supabase project details
 const SUPABASE_CONFIG = {
     url: "https://dsrchxpktgkryqkryqok.supabase.co", 
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcmNoeHBrdGdrcnlxa3J5cW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MDI2NDUsImV4cCI6MjA3NzA3ODY0NX0.pKdhZ0boPTFMchJbyzHkNeH0Jx04K3bnzJW2bElgQ4o",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcmNoeXBrdGdrcnlxa3J5cW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MDI2NDUsImV4cCI6MjA3NzA3ODY0NX0.pKdhZ0boPTFMchJbyzHkNeH0Jx04K3bnzJW2bElgQ4o",
     // Edge Function URL
     edgeFunctionUrl: "https://dsrchxpktgkryqkryqok.supabase.co/functions/v1/admin-stories"
 };
@@ -62,6 +62,8 @@ class SupabaseClient {
         }
 
         try {
+            console.log('Sending request to Edge Function:', { action, hasCredentials: !!(credentials.username && credentials.password) });
+            
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
@@ -69,8 +71,10 @@ class SupabaseClient {
             });
 
             const responseData = await response.json();
+            console.log('Edge Function response:', { status: response.status, data: responseData });
+
             if (!response.ok) {
-                throw new Error(responseData.error || 'Request failed');
+                throw new Error(responseData.error || `Request failed with status ${response.status}`);
             }
 
             return responseData;
@@ -100,7 +104,9 @@ class SupabaseClient {
     // Simple authentication check (no hardcoded password)
     async validateCredentials(username, password) {
         try {
+            console.log('Validating credentials for username:', username);
             const response = await this.edgeFunctionRequest('validateCredentials', { username, password });
+            console.log('Validation response:', response);
             return response.success;
         } catch (error) {
             console.error('Authentication failed:', error.message);
@@ -121,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     supabase = new SupabaseClient(SUPABASE_CONFIG);
+    console.log('Supabase client initialized');
 });
 
 // Utility function to convert Google Drive URLs to direct image links
