@@ -72,6 +72,26 @@ function hideAddForm() {
     document.getElementById('add-story-form').classList.add('hidden');
 }
 
+// Convert Google Drive URL to direct download URL
+function getDirectGoogleDriveUrl(driveUrl) {
+    driveUrl = driveUrl.trim();
+
+    // Check if the URL is already direct
+    if (driveUrl.includes("uc?export=download")) {
+        return driveUrl;
+    }
+
+    // Extract file ID from Google Drive URL
+    const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+        return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    }
+
+    // Return original if no match
+    return driveUrl;
+}
+
+// DOM interaction function
 function convertGoogleDriveUrl() {
     const driveUrl = document.getElementById('google-drive-url').value.trim();
     const imageUrl = document.getElementById('story-image');
@@ -81,7 +101,7 @@ function convertGoogleDriveUrl() {
         return;
     }
     
-    const directUrl = window.convertGoogleDriveUrl(driveUrl);
+    const directUrl = getDirectGoogleDriveUrl(driveUrl);
     imageUrl.value = directUrl;
     
     // Show success message

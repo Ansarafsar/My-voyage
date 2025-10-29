@@ -49,7 +49,6 @@ function loadCategoryStories() {
                     <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
                         <h3 style="color: #6c757d;">No stories yet!</h3>
                         <p>Be the first to add a story to this category.</p>
-                        <p style="color: #007bff;"><strong>Visit <a href="admin.html" style="text-decoration: none;">/admin</a> to add your first story</strong></p>
                     </div>
                 `;
                 hidePagination();
