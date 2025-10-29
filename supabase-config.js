@@ -44,6 +44,8 @@ class SupabaseClient {
     }
 
     // Make requests to Edge Function (for admin operations)
+    // In supabase-config.js, update the edgeFunctionRequest method
+
     async edgeFunctionRequest(action, data = {}, credentials = {}) {
         const url = this.edgeFunctionUrl;
         const headers = {
@@ -62,12 +64,15 @@ class SupabaseClient {
         }
 
         try {
-            console.log('Sending request to Edge Function:', { action, hasCredentials: !!(credentials.username && credentials.password) });
-            
+            console.log('Sending request to Edge Function:', { 
+                action, 
+                hasCredentials: !!(credentials.username && credentials.password) || action === 'validateCredentials' 
+            });
+        
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify(requestBody)
+            b    ody: JSON.stringify(requestBody)
             });
 
             const responseData = await response.json();
@@ -81,7 +86,7 @@ class SupabaseClient {
         } catch (error) {
             console.error('Edge Function request failed:', error);
             throw error;
-        }
+        }  
     }
 
     // Stories CRUD operations using Edge Function
@@ -102,10 +107,11 @@ class SupabaseClient {
     }
 
     // Simple authentication check (no hardcoded password)
+    // Simple authentication check (no hardcoded password)
     async validateCredentials(username, password) {
         try {
             console.log('Validating credentials for username:', username);
-            const response = await this.edgeFunctionRequest('validateCredentials', { username, password });
+            const response = await this.edgeFunctionRequest('validateCredentials', { username, password }, { username, password });
             console.log('Validation response:', response);
             return response.success;
         } catch (error) {
