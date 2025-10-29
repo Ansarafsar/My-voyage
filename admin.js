@@ -76,15 +76,16 @@ function hideAddForm() {
 function getDirectGoogleDriveUrl(driveUrl) {
     driveUrl = driveUrl.trim();
 
-    // Check if the URL is already direct
-    if (driveUrl.includes("uc?export=download")) {
+    // If already direct
+    if (driveUrl.includes("uc?export=view")) {
         return driveUrl;
     }
 
-    // Extract file ID from Google Drive URL
-    const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-        return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    // Extract file ID
+    const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)/);
+    if (match) {
+        const fileId = match[1] || match[2];
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
     }
 
     // Return original if no match
