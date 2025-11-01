@@ -154,7 +154,10 @@ async function addStory() {
         showError(errorDiv, 'Failed to add: ' + error.message);
     }
 }
-
+window.addStory = addStory;
+window.editStory = editStory;
+window.updateStory = updateStory;
+window.deleteStory = deleteStory;
 
 async function loadStories() {
     const container = document.getElementById('stories-container');
@@ -169,16 +172,17 @@ async function loadStories() {
             return;
         }
 
+        // === BUILD HTML WITHOUT escapeHtml() ON BUTTONS ===
         container.innerHTML = stories.map(story => {
             const imageUrl = story.image_url
                 ? supabase.getProxyImageUrl(story.image_url)
                 : null;
 
-            // Escape ONLY user text
-            const title = escapeHtml(story.title);
-            const location = escapeHtml(story.location || '—');
+            // Escape only text
+            const title = story.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const location = story.location ? story.location.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '—';
             const date = story.travel_date || '—';
-            const preview = escapeHtml(story.story_content.substring(0, 120)) +
+            const preview = story.story_content.substring(0, 120).replace(/</g, '&lt;').replace(/>/g, '&gt;') +
                            (story.story_content.length > 120 ? '...' : '');
 
             return `
@@ -209,11 +213,7 @@ window.logout = logout;
 window.showAddForm = showAddForm;
 window.hideAddForm = hideAddForm;
 window.convertGoogleDriveUrl = convertGoogleDriveUrl;
-window.addStory = addStory;
 window.loadStories = loadStories;
-window.editStory = editStory;
-window.updateStory = updateStory;
-window.deleteStory = deleteStory;
 
 function editStory(id) {
     const card = document.querySelector(`.story-card[data-id="${id}"]`);
