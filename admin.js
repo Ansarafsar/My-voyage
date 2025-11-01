@@ -168,37 +168,105 @@ async function loadStories() {
             return;
         }
 
-        // ✅ Updated image handling (proxy + fallback + “Document”)
-        container.innerHTML = stories.map(story => `
-            <div class="story-card" data-id="${story.id}">
-                ${story.image_url
-                    ? `<img src="${supabase.getProxyImageUrl(story.image_url)}" 
-                             alt="${escapeHtml(story.title)}" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">`
-                    : `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                  display: flex; align-items: center; justify-content: center;
-                                  color: white; font-size: 36px; height: 180px;">Document</div>`
-                }
-                <h4>${escapeHtml(story.title)}</h4>
-                <p><strong>Category:</strong> ${escapeHtml(story.category.replace('_', ' '))}</p>
-                <p><strong>Location:</strong> ${escapeHtml(story.location || 'N/A')}</p>
-                <p><strong>Date:</strong> ${story.travel_date || 'N/A'}</p>
-                <p>${escapeHtml(story.story_content.substring(0, 100))}${story.story_content.length > 100 ? '...' : ''}</p>
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-secondary" onclick="editStory(${story.id})">Edit</button>
-                    <button class="btn" onclick="deleteStory(${story.id})" style="background: #dc3545; margin-left: 10px;">Delete</button>
+        container.innerHTML = stories.map(story => {
+            const imageUrl = story.image_url
+                ? supabase.getProxyImageUrl(story.image_url)
+                : null;
+
+            return `
+                <div class="story-card" data-id="${story.id}">
+                    ${imageUrl
+                        ? `<img src="${imageUrl}" 
+                                 alt="${escapeHtml(story.title)}" 
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K';"
+                                 style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">`
+                        : `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                      display: flex; align-items: center; justify-content: center; 
+                                      color: white; font-size: 36px; height: 180px; border-radius: 8px; margin-bottom: 12px;">
+                             Document
+                           </div>`
+                    }
+                    <h4 style="margin: 0 0 8px 0; font-size: 1.1em; color: #333;">${escapeHtml(story.title)}</h4>
+                    <p style="margin: 4px 0; font-size: 0.9em; color: #555;">
+                        <strong>Location:</strong> ${escapeHtml(story.location || '—')}
+                    </p>
+                    <p style="margin: 4px 0; font-size: 0.9em; color: #555;">
+                        <strong>Date:</strong> ${story.travel_date || '—'}
+                    </p>
+                    <p style="margin: 8px 0; font-size: 0.85em; color: #666; line-height: 1.4;">
+                        ${escapeHtml(story.story_content.substring(0, 120))}${story.story_content.length > 120 ? '...' : ''}
+                    </p>
+                    <div style="margin-top: 12px; display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="editStory(${story.id})">Edit</button>
+                        <button class="btn" onclick="deleteStory(${story.id})" style="background: #dc3545;">Delete</button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (error) {
-        container.innerHTML = `<p>Error: ${escapeHtml(error.message)}</p>`;
+        container.innerHTML = `<p style="color: #dc3545;">Error: ${escapeHtml(error.message)}</p>`;
     }
 }
 
 function editStory(id) {
-    alert('Edit feature coming soon! Delete and re-add for now.');
-}
+    const card = document.querySelector(`.story-card[data-id="${id}"]`);
+    if (!card) return;
 
+    const title = card.querySelector('h4').textContent;
+    const location = card.querySelector('p:nth-of-type(1)').textContent.replace('Location: ', '').trim();
+    const date = card.querySelector('p:nth-of-type(2)').textContent.replace('Date: ', '').trim();
+    const preview = card.querySelector('p:nth-of-type(3)').textContent;
+    const fullContent = preview.endsWith('...') 
+        ? prompt('Full story content (paste from modal or DB):', '') 
+        : preview;
+
+    // Fill form
+    document.getElementById('story-title').value = title;
+    document.getElementById('story-location').value = location === '—' ? '' : location;
+    document.getElementById('story-date').value = date === '—' ? '' : date;
+    document.getElementById('story-content').value = fullContent || '';
+
+    // Change button
+    const addBtn = document.querySelector('#add-story-form .btn');
+    addBtn.textContent = 'Update Story';
+    addBtn.onclick = () => updateStory(id);
+
+    showAddForm();
+}
+async function updateStory(id) {
+    if (!currentUser) {
+        alert("Please log in again");
+        return;
+    }
+
+    const title = document.getElementById('story-title').value.trim();
+    const category = document.getElementById('story-category').value;
+    const content = document.getElementById('story-content').value.trim();
+    const imageUrl = document.getElementById('story-image').value.trim();
+    const location = document.getElementById('story-location').value.trim();
+    const date = document.getElementById('story-date').value;
+
+    if (!title || !content) {
+        showError(document.getElementById('add-error'), 'Title and content required');
+        return;
+    }
+
+    const storyData = {
+        title, category, story_content: content,
+        image_url: imageUrl || null,
+        location: location || null,
+        travel_date: date || null
+    };
+
+    try {
+        await supabase.updateStory(id, storyData, currentUser);
+        showSuccess(document.getElementById('add-success'), 'Story updated!');
+        hideAddForm();
+        await loadStories();
+    } catch (error) {
+        showError(document.getElementById('add-error'), 'Update failed: ' + error.message);
+    }
+}
 async function deleteStory(id) {
     if (!confirm('Delete this story permanently?')) return;
 
@@ -242,4 +310,5 @@ window.convertGoogleDriveUrl = convertGoogleDriveUrl;
 window.addStory = addStory;
 window.loadStories = loadStories;
 window.editStory = editStory;
+window.updateStory = updateStory;
 window.deleteStory = deleteStory;
