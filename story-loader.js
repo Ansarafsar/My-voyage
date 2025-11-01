@@ -86,39 +86,48 @@ function loadCategoryStories() {
                 return;
             }
             
-            // ✅ Updated story card image section
-            const storiesHTML = stories.map(story => `
-                <div class="story-card" onclick="openModal(${story.id})">
-                    ${story.image_url
-                        ? `<img src="${supabase.getProxyImageUrl(story.image_url)}" 
-                                 alt="${escapeHtml(story.title)}" 
-                                 class="story-card-image" 
-                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">`
-                        : `<div class="story-card-image" 
-                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                        display: flex; align-items: center; justify-content: center;
-                                        color: white; font-size: 48px;">Document</div>`
-                    }
-                    <div class="story-card-content">
-                        <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
-                        <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
-                        <div class="story-card-meta">
-                            ${story.location 
-                                ? `<div class="story-card-location">
-                                        <span>📍</span>
-                                        <span>${escapeHtml(story.location)}</span>
-                                   </div>`
-                                : '<div></div>'}
-                            ${story.travel_date 
-                                ? `<div class="story-card-date">
-                                        <span>📅</span>
-                                        <span>${story.travel_date}</span>
-                                   </div>`
-                                : ''}
+            // ✅ Fixed story card image section
+            const storiesHTML = stories.map(story => {
+                // Get image URL with proxy if available
+                const imageUrl = story.image_url 
+                    ? (supabase.getProxyImageUrl 
+                        ? supabase.getProxyImageUrl(story.image_url) 
+                        : story.image_url)
+                    : null;
+                
+                return `
+                    <div class="story-card" onclick="openModal(${story.id})">
+                        ${imageUrl
+                            ? `<img src="${imageUrl}" 
+                                     alt="${escapeHtml(story.title)}" 
+                                     class="story-card-image" 
+                                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">`
+                            : `<div class="story-card-image" 
+                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-size: 48px;">📝</div>`
+                        }
+                        <div class="story-card-content">
+                            <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
+                            <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
+                            <div class="story-card-meta">
+                                ${story.location 
+                                    ? `<div class="story-card-location">
+                                            <span>📍</span>
+                                            <span>${escapeHtml(story.location)}</span>
+                                       </div>`
+                                    : '<div></div>'}
+                                ${story.travel_date 
+                                    ? `<div class="story-card-date">
+                                            <span>📅</span>
+                                            <span>${story.travel_date}</span>
+                                       </div>`
+                                    : ''}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             container.innerHTML = storiesHTML;
             updatePagination(totalPages, totalCount);
@@ -135,7 +144,6 @@ function loadCategoryStories() {
             hidePagination();
         });
 }
-
 
 function openModal(storyId) {
     const category = getCategoryFromUrl();
@@ -157,9 +165,11 @@ function openModal(storyId) {
             
             // Set image with proxy
             if (story.image_url) {
-                modalImage.src = supabase.getProxyImageUrl ? 
-                    supabase.getProxyImageUrl(story.image_url) : 
-                    story.image_url;
+                const imageUrl = supabase.getProxyImageUrl 
+                    ? supabase.getProxyImageUrl(story.image_url) 
+                    : story.image_url;
+                    
+                modalImage.src = imageUrl;
                 modalImage.alt = escapeHtml(story.title);
                 modalImage.style.display = 'block';
             } else {
@@ -169,20 +179,24 @@ function openModal(storyId) {
             // Set title
             modalTitle.textContent = story.title;
             
-            // Set location
-            if (story.location) {
-                modalLocation.style.display = 'flex';
+            // Set location - always show the container but hide if empty
+            modalLocation.style.display = 'flex';
+            if (story.location && story.location.trim() !== '') {
                 modalLocation.querySelector('span:last-child').textContent = story.location;
+                modalLocation.style.opacity = '1';
             } else {
-                modalLocation.style.display = 'none';
+                modalLocation.querySelector('span:last-child').textContent = 'No location specified';
+                modalLocation.style.opacity = '0.5';
             }
             
-            // Set date
-            if (story.travel_date) {
-                modalDate.style.display = 'flex';
+            // Set date - always show the container but hide if empty
+            modalDate.style.display = 'flex';
+            if (story.travel_date && story.travel_date.trim() !== '') {
                 modalDate.querySelector('span:last-child').textContent = story.travel_date;
+                modalDate.style.opacity = '1';
             } else {
-                modalDate.style.display = 'none';
+                modalDate.querySelector('span:last-child').textContent = 'No date specified';
+                modalDate.style.opacity = '0.5';
             }
             
             // Set story content
@@ -197,7 +211,6 @@ function openModal(storyId) {
             alert('Unable to load story. Please try again.');
         });
 }
-
 
 function closeModal() {
     const modal = document.getElementById('story-modal');
