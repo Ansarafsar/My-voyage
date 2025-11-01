@@ -99,8 +99,15 @@ function convertGoogleDriveUrl() {
         return;
     }
 
-    const directUrl = getDirectGoogleDriveUrl(driveUrl);
-    imageUrl.value = directUrl;
+    // Use the supabase helper function if available
+    if (supabase && supabase.convertGoogleDriveUrl) {
+        const proxyUrl = supabase.convertGoogleDriveUrl(driveUrl);
+        imageUrl.value = proxyUrl;
+    } else {
+        // Fallback to the original implementation
+        const directUrl = getDirectGoogleDriveUrl(driveUrl);
+        imageUrl.value = directUrl;
+    }
 
     const successDiv = document.getElementById('add-success');
     successDiv.textContent = 'Google Drive URL converted!';

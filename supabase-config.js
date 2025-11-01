@@ -136,7 +136,18 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Supabase client initialized');
 });
 
-// Utility function to convert Google Drive URLs to direct image links
+function getProxyImageUrl(originalUrl) {
+    if (!originalUrl) return '';
+    
+    // Only proxy Google Drive images
+    if (originalUrl.includes("drive.google.com") || originalUrl.includes("googleusercontent.com")) {
+        return `${SUPABASE_CONFIG.edgeFunctionUrl}/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+    }
+    
+    return originalUrl;
+}
+
+// Update the convertGoogleDriveUrl function to use the proxy
 function convertGoogleDriveUrl(driveUrl) {
     if (!driveUrl) return '';
     
@@ -144,29 +155,35 @@ function convertGoogleDriveUrl(driveUrl) {
     if (driveUrl.includes('drive.google.com/file/d/')) {
         const fileId = driveUrl.match(/\/file\/d\/([^\/]+)/);
         if (fileId) {
-            return `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            const directUrl = `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            return getProxyImageUrl(directUrl);
         }
     }
     
     if (driveUrl.includes('drive.google.com/open?id=')) {
         const fileId = driveUrl.match(/id=([^&]+)/);
         if (fileId) {
-            return `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            const directUrl = `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            return getProxyImageUrl(directUrl);
         }
     }
     
     if (driveUrl.includes('drive.google.com/uc?id=')) {
         const fileId = driveUrl.match(/id=([^&]+)/);
         if (fileId) {
-            return `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            const directUrl = `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+            return getProxyImageUrl(directUrl);
         }
     }
     
-    // If already in direct format, return as is
+    // If already in direct format, proxy it
     if (driveUrl.includes('uc?export=view&id=')) {
-        return driveUrl;
+        return getProxyImageUrl(driveUrl);
     }
     
-    // Return original URL if no conversion possible
+    // Return original URL if not a Google Drive URL
     return driveUrl;
 }
+// Export the helper functions for use in other files
+window.getProxyImageUrl = getProxyImageUrl;
+window.convertGoogleDriveUrl = convertGoogleDriveUrl;
