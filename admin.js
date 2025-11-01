@@ -1,4 +1,4 @@
-// admin.js - Fixed & Fully Working Admin Panel
+// admin.js - Fixed & Fully Working Admin Panel (Patched with proxy image + fallback)
 
 let currentUser = null;
 
@@ -31,7 +31,6 @@ async function login() {
     try {
         const isValid = await supabase.validateCredentials(username, password);
         if (isValid) {
-            // Save full credentials
             currentUser = { username, password, loggedIn: true };
             localStorage.setItem('myVoyagesAdminUser', JSON.stringify(currentUser));
             showAdminSection();
@@ -99,12 +98,10 @@ function convertGoogleDriveUrl() {
         return;
     }
 
-    // Use the supabase helper function if available
     if (supabase && supabase.convertGoogleDriveUrl) {
         const proxyUrl = supabase.convertGoogleDriveUrl(driveUrl);
         imageUrl.value = proxyUrl;
     } else {
-        // Fallback to the original implementation
         const directUrl = getDirectGoogleDriveUrl(driveUrl);
         imageUrl.value = directUrl;
     }
@@ -149,7 +146,7 @@ async function addStory() {
     };
 
     try {
-        await supabase.createStory(storyData, currentUser); // Pass full credentials
+        await supabase.createStory(storyData, currentUser);
         showSuccess(successDiv, 'Story added successfully!');
         hideAddForm();
         await loadStories();
@@ -171,9 +168,17 @@ async function loadStories() {
             return;
         }
 
+        // ✅ Updated image handling (proxy + fallback + “Document”)
         container.innerHTML = stories.map(story => `
             <div class="story-card" data-id="${story.id}">
-                ${story.image_url ? `<img src="${story.image_url}" alt="${escapeHtml(story.title)}" onerror="this.style.display='none'">` : ''}
+                ${story.image_url
+                    ? `<img src="${supabase.getProxyImageUrl(story.image_url)}" 
+                             alt="${escapeHtml(story.title)}" 
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">`
+                    : `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                  display: flex; align-items: center; justify-content: center;
+                                  color: white; font-size: 36px; height: 180px;">Document</div>`
+                }
                 <h4>${escapeHtml(story.title)}</h4>
                 <p><strong>Category:</strong> ${escapeHtml(story.category.replace('_', ' '))}</p>
                 <p><strong>Location:</strong> ${escapeHtml(story.location || 'N/A')}</p>
@@ -186,7 +191,7 @@ async function loadStories() {
             </div>
         `).join('');
     } catch (error) {
-        container.innerHTML = `<p>Error: ${error.message}</p>`;
+        container.innerHTML = `<p>Error: ${escapeHtml(error.message)}</p>`;
     }
 }
 
@@ -203,7 +208,7 @@ async function deleteStory(id) {
     }
 
     try {
-        await supabase.deleteStory(id, currentUser); // Pass credentials
+        await supabase.deleteStory(id, currentUser);
         alert('Story deleted!');
         await loadStories();
     } catch (error) {

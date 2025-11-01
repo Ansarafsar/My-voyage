@@ -50,14 +50,18 @@ function loadCategoryStories() {
         return;
     }
     
-    container.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>Loading stories...</p></div>';
+    container.innerHTML = `
+        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+            <p>Loading stories...</p>
+        </div>
+    `;
     
     supabase.getStories(category)
         .then(data => {
             const allStories = data.stories || [];
-            const categoryStories = category ? 
-                allStories.filter(story => story.category === category) : 
-                allStories;
+            const categoryStories = category
+                ? allStories.filter(story => story.category === category)
+                : allStories;
                 
             const totalCount = categoryStories.length;
             const totalPages = Math.ceil(totalCount / storiesPerPage);
@@ -68,7 +72,7 @@ function loadCategoryStories() {
             
             if (categoryStories.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 60px; grid-column: 1/-1; background: #f8f9fa; border-radius: 12px;">
+                    <div style="text-align: center; padding: 60px; grid-column: 1 / -1; background: #f8f9fa; border-radius: 12px;">
                         <h3 style="color: #6c757d; margin-bottom: 10px;">No stories yet!</h3>
                         <p style="color: #999;">Be the first to add a story to this category.</p>
                     </div>
@@ -82,38 +86,39 @@ function loadCategoryStories() {
                 return;
             }
             
-            // Generate story cards
+            // ✅ Updated story card image section
             const storiesHTML = stories.map(story => `
-    <div class="story-card" onclick="openModal(${story.id})">
-        ${story.image_url ? 
-            `<img src="${supabase.getProxyImageUrl ? 
-                supabase.getProxyImageUrl(story.image_url) : 
-                story.image_url}" 
-                alt="${escapeHtml(story.title)}" 
-                class="story-card-image" 
-                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">` : 
-            `<div class="story-card-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">📝</div>`
-        }
-        <div class="story-card-content">
-            <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
-            <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
-            <div class="story-card-meta">
-                ${story.location ? 
-                    `<div class="story-card-location">
-                        <span>📍</span>
-                        <span>${escapeHtml(story.location)}</span>
-                    </div>` : '<div></div>'
-                }
-                ${story.travel_date ? 
-                    `<div class="story-card-date">
-                        <span>📅</span>
-                        <span>${story.travel_date}</span>
-                    </div>` : ''
-                }
-            </div>
-        </div>
-    </div>
-`).join('');
+                <div class="story-card" onclick="openModal(${story.id})">
+                    ${story.image_url
+                        ? `<img src="${supabase.getProxyImageUrl(story.image_url)}" 
+                                 alt="${escapeHtml(story.title)}" 
+                                 class="story-card-image" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">`
+                        : `<div class="story-card-image" 
+                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                        display: flex; align-items: center; justify-content: center;
+                                        color: white; font-size: 48px;">Document</div>`
+                    }
+                    <div class="story-card-content">
+                        <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
+                        <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
+                        <div class="story-card-meta">
+                            ${story.location 
+                                ? `<div class="story-card-location">
+                                        <span>📍</span>
+                                        <span>${escapeHtml(story.location)}</span>
+                                   </div>`
+                                : '<div></div>'}
+                            ${story.travel_date 
+                                ? `<div class="story-card-date">
+                                        <span>📅</span>
+                                        <span>${story.travel_date}</span>
+                                   </div>`
+                                : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
             
             container.innerHTML = storiesHTML;
             updatePagination(totalPages, totalCount);
@@ -124,12 +129,13 @@ function loadCategoryStories() {
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; grid-column: 1/-1; background: #f8d7da; border-radius: 12px; color: #721c24;">
                     <p>Unable to load stories. Please check your connection and try again.</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Error: ${error.message}</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">Error: ${escapeHtml(error.message)}</p>
                 </div>
             `;
             hidePagination();
         });
 }
+
 
 function openModal(storyId) {
     const category = getCategoryFromUrl();
