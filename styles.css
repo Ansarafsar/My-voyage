@@ -346,10 +346,6 @@ header {
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 header::after {
@@ -541,105 +537,4 @@ video {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 30px;
     margin-bottom: 25px;
-}
-
-header p {
-    max-width: 90%;
-    margin: 10px auto;
-    line-height: 1.4;
-}
-
-/* Mobile-specific adjustments */
-@media only screen and (max-width: 768px) {
-    header {
-        height: auto;
-        min-height: 400px;
-        padding: 40px 20px;
-    }
-    
-    header h1 {
-        padding: 20px 0;
-        font-size: 2.5em;
-        margin-bottom: 10px;
-    }
-    
-    header p {
-        font-size: 18px !important;
-        max-width: 95%;
-        margin: 15px auto;
-        line-height: 1.5;
-    }
-    
-    .navbar {
-        position: relative;
-        width: 100%;
-        padding: 10px 0;
-        margin-top: 20px;
-        float: none;
-    }
-    
-    .menu-icon {
-        display: block;
-        position: absolute;
-        top: 10px;
-        right: 20px;
-    }
-
-    .menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 50px;
-        right: 20px;
-        width: 200px;
-        background-color: rgba(44, 62, 80, 0.9);
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 100;
-    }
-
-    .menu.show {
-        display: flex;
-    }
-    
-    .menu a {
-        color: #ecf0f1;
-        text-decoration: none;
-        padding: 12px 20px;
-        font-size: 16px;
-        margin: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        transition: background-color 0.3s;
-    }
-    
-    .menu a:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-bottom: none;
-    }
-    
-    .signup {
-        margin-top: 10px;
-        text-align: center;
-    }
-    
-    .signup a {
-        display: inline-block;
-        margin: 10px 0;
-    }
-}
-
-/* Extra small screens */
-@media only screen and (max-width: 480px) {
-    header {
-        min-height: 350px;
-        padding: 30px 15px;
-    }
-    
-    header h1 {
-        font-size: 2em;
-    }
-    
-    header p {
-        font-size: 16px !important;
-    }
 }
