@@ -162,6 +162,8 @@ body {
 .story-card-meta {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
     align-items: center;
     margin-top: 10px;
     font-size: 12px;
@@ -171,7 +173,7 @@ body {
 .story-card-location {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     color: #666;
     font-size: 12px;
 }
@@ -179,7 +181,7 @@ body {
 .story-card-date {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     color: #666;
     font-size: 12px;
 }
@@ -212,10 +214,10 @@ body {
 .story-modal {
     background: white;
     border-radius: 20px;
-    width: 75vw; /* 75% of viewport width */
-    max-width: 1200px; /* Maximum width */
-    height: 75vh; /* 75% of viewport height */
-    max-height: 900px; /* Maximum height */
+    width: 75vw;
+    max-width: 1200px;
+    height: 75vh;
+    max-height: 900px;
     overflow: hidden;
     transform: scale(0.9);
     transition: transform 0.3s ease;
@@ -271,7 +273,7 @@ body {
 }
 
 .modal-title {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 600;
     color: #333;
     margin: 0 0 15px 0;
@@ -284,21 +286,24 @@ body {
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
 }
 
 .modal-location, .modal-date {
-    /* display: flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    color: #666; */
-    font-size: 14px;
+    gap: 8px;
+    color: #666;
+    font-size: 16px;
+    transition: opacity 0.3s ease;
 }
 
 .modal-story {
     color: #444;
     line-height: 1.8;
-    font-size: 16px;
+    font-size: 18px;
     white-space: pre-wrap;
+    flex: 1;
 }
 
 /* Pagination Styles */
@@ -502,20 +507,21 @@ footer {
     }
 
     .story-modal {
-        width: 95vw;
-        height: 95vh;
-        max-width: none;
-        max-height: none;
+        flex-direction: row;
+        height: 80vh;
+        max-height: 800px;
     }
 
     .modal-image {
-        height: 30%;
-        height: 200px;
+        width: 50%;
+        height: 100%;
+        min-height: auto;
     }
 
     .modal-content {
-        padding: 20px;
-        /*max-height: calc(95vh - 200px);*/
+        width: 50%;
+        padding: 30px;
+        overflow-y: auto;
     }
 
     .modal-title {
@@ -545,6 +551,35 @@ footer {
     .story-card-image {
         height: 140px;
     }
+    .modal-backdrop {
+        padding: 10px;
+    }
+    
+    .story-modal {
+        width: 95vw;
+        height: 95vh;
+    }
+    
+    .modal-image {
+        height: 35%;
+        min-height: 200px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+    }
+    
+    .modal-title {
+        font-size: 22px;
+    }
+    
+    .modal-story {
+        font-size: 16px;
+    }
+    
+    .modal-location, .modal-date {
+        font-size: 14px;
+    }
 }
 
 video {
@@ -557,4 +592,39 @@ video {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 30px;
     margin-bottom: 25px;
+}
+
+.modal-location span:first-child,
+.modal-date span:first-child {
+    font-size: 1.2em;
+}
+
+.modal-location span:last-child,
+.modal-date span:last-child {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Dim "not specified" */
+.modal-location[style*="opacity: 0.6"],
+.modal-date[style*="opacity: 0.6"] {
+    font-style: italic;
+}
+.story-card-location span:first-child,
+.story-card-date span:first-child {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.story-card-location span:last-child,
+.story-card-date span:last-child {
+    color: #444;
+    font-weight: 500;
+}
+
+/* Dim empty fields */
+.story-card-location span:last-child:empty,
+.story-card-date span:last-child:empty {
+    color: #ccc;
+    font-style: italic;
 }

@@ -111,19 +111,15 @@ function loadCategoryStories() {
                             <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
                             <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
                             <div class="story-card-meta">
-                                ${story.location 
-                                    ? `<div class="story-card-location">
-                                            <span>📍</span>
-                                            <span>${escapeHtml(story.location)}</span>
-                                       </div>`
-                                    : '<div></div>'}
-                                ${story.travel_date 
-                                    ? `<div class="story-card-date">
-                                            <span>📅</span>
-                                            <span>${story.travel_date}</span>
-                                       </div>`
-                                    : ''}
-                            </div>
+    <div class="story-card-location">
+        <span>Location</span>
+        <span>${story.location ? escapeHtml(story.location) : '—'}</span>
+    </div>
+    <div class="story-card-date">
+        <span>Date</span>
+        <span>${story.travel_date ? story.travel_date : '—'}</span>
+    </div>
+</div>
                         </div>
                     </div>
                 `;
@@ -155,7 +151,6 @@ function openModal(storyId) {
             
             if (!story) return;
             
-            // Populate modal content
             const modal = document.getElementById('story-modal');
             const modalImage = document.getElementById('modal-image');
             const modalTitle = document.getElementById('modal-title');
@@ -163,46 +158,50 @@ function openModal(storyId) {
             const modalDate = document.getElementById('modal-date');
             const modalStory = document.getElementById('modal-story');
             
-            // Set image with proxy
+            // === IMAGE ===
             if (story.image_url) {
-                const imageUrl = supabase.getProxyImageUrl 
-                    ? supabase.getProxyImageUrl(story.image_url) 
-                    : story.image_url;
-                    
-                modalImage.src = imageUrl;
+                modalImage.src = supabase.getProxyImageUrl(story.image_url);
                 modalImage.alt = escapeHtml(story.title);
                 modalImage.style.display = 'block';
             } else {
                 modalImage.style.display = 'none';
             }
             
-            // Set title
+            // === TITLE ===
             modalTitle.textContent = story.title;
             
-            // Set location - always show the container but hide if empty
-            modalLocation.style.display = 'flex';
-            if (story.location && story.location.trim() !== '') {
-                modalLocation.querySelector('span:last-child').textContent = story.location;
+            // === LOCATION ===
+            const locationSpan = modalLocation.querySelector('span:last-child');
+            if (story.location && story.location.trim()) {
+                locationSpan.textContent = story.location;
                 modalLocation.style.opacity = '1';
+                modalLocation.style.fontWeight = '500';
             } else {
-                modalLocation.querySelector('span:last-child').textContent = 'No location specified';
-                modalLocation.style.opacity = '0.5';
+                locationSpan.textContent = 'Location not specified';
+                modalLocation.style.opacity = '0.6';
+                modalLocation.style.fontStyle = 'italic';
+                modalLocation.style.fontWeight = 'normal';
             }
+            modalLocation.style.display = 'flex';
             
-            // Set date - always show the container but hide if empty
-            modalDate.style.display = 'flex';
-            if (story.travel_date && story.travel_date.trim() !== '') {
-                modalDate.querySelector('span:last-child').textContent = story.travel_date;
+            // === DATE ===
+            const dateSpan = modalDate.querySelector('span:last-child');
+            if (story.travel_date && story.travel_date.trim()) {
+                dateSpan.textContent = story.travel_date;
                 modalDate.style.opacity = '1';
+                modalDate.style.fontWeight = '500';
             } else {
-                modalDate.querySelector('span:last-child').textContent = 'No date specified';
-                modalDate.style.opacity = '0.5';
+                dateSpan.textContent = 'Date not specified';
+                modalDate.style.opacity = '0.6';
+                modalDate.style.fontStyle = 'italic';
+                modalDate.style.fontWeight = 'normal';
             }
+            modalDate.style.display = 'flex';
             
-            // Set story content
+            // === STORY CONTENT ===
             modalStory.textContent = story.story_content;
             
-            // Show modal
+            // === SHOW MODAL ===
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         })
