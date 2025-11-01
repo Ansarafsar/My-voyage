@@ -197,6 +197,7 @@ body {
     visibility: hidden;
     transition: all 0.3s ease;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-backdrop.active {
@@ -214,6 +215,8 @@ body {
     transform: scale(0.9);
     transition: transform 0.3s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    margin: 0 auto;
 }
 
 .modal-backdrop.active .story-modal {
@@ -476,6 +479,10 @@ footer {
         padding: 0 15px;
     }
 
+    .modal-backdrop {
+        padding: 15px;
+    }
+    
     .story-card {
         height: 260px;
     }
