@@ -544,7 +544,44 @@ footer {
         font-size: 12px;
     }
 } */
-
+@media only screen and (min-width: 768px) {
+    .modal-backdrop {
+        padding: 20px;
+    }
+    
+    /* More specific selector to override default */
+    .modal-backdrop .story-modal {
+        width: 75vw !important;
+        height: 80vh !important;
+        max-height: 800px !important;
+        flex-direction: row !important; /* Horizontal layout for PC */
+    }
+    
+    .modal-backdrop .story-modal .modal-image {
+        width: 50% !important;
+        height: 100% !important;
+        min-height: auto !important;
+    }
+    
+    .modal-backdrop .story-modal .modal-content {
+        width: 50% !important;
+        padding: 30px !important;
+        overflow-y: auto !important;
+    }
+    
+    .modal-backdrop .story-modal .modal-title {
+        font-size: 24px !important;
+    }
+    
+    .modal-backdrop .story-modal .modal-story {
+        font-size: 18px !important;
+    }
+    
+    .modal-backdrop .story-modal .modal-location,
+    .modal-backdrop .story-modal .modal-date {
+        font-size: 16px !important;
+    }
+}
 /*@media only screen and (max-width: 480px) {
     /* .tours, .tours_home {
         grid-template-columns: 1fr;
