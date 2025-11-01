@@ -155,6 +155,7 @@ async function addStory() {
     }
 }
 
+
 async function loadStories() {
     const container = document.getElementById('stories-container');
     container.innerHTML = '<p>Loading stories...</p>';
@@ -203,6 +204,16 @@ async function loadStories() {
         container.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
     }
 }
+window.login = login;
+window.logout = logout;
+window.showAddForm = showAddForm;
+window.hideAddForm = hideAddForm;
+window.convertGoogleDriveUrl = convertGoogleDriveUrl;
+window.addStory = addStory;
+window.loadStories = loadStories;
+window.editStory = editStory;
+window.updateStory = updateStory;
+window.deleteStory = deleteStory;
 
 function editStory(id) {
     const card = document.querySelector(`.story-card[data-id="${id}"]`);
@@ -298,13 +309,3 @@ function escapeHtml(text) {
 }
 
 // Export to window
-window.login = login;
-window.logout = logout;
-window.showAddForm = showAddForm;
-window.hideAddForm = hideAddForm;
-window.convertGoogleDriveUrl = convertGoogleDriveUrl;
-window.addStory = addStory;
-window.loadStories = loadStories;
-window.editStory = editStory;
-window.updateStory = updateStory;
-window.deleteStory = deleteStory;
