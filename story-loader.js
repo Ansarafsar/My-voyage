@@ -1,18 +1,45 @@
-// Dynamic Story Loader for Category Pages with Pagination
-// This script dynamically loads stories from Supabase Edge Function
-
+// Dynamic Story Loader for Category Pages with Modal Popups
 let currentPage = 1;
-const storiesPerPage = 6; // Number of stories per page
+const storiesPerPage = 6;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Get page from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     currentPage = parseInt(urlParams.get('page')) || 1;
     
     loadCategoryStories();
     setupPagination();
+    createModalStructure();
 });
+
+function createModalStructure() {
+    // Create modal HTML if it doesn't exist
+    if (!document.getElementById('story-modal')) {
+        const modalHTML = `
+            <div id="story-modal" class="modal-backdrop">
+                <div class="story-modal">
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                    <img id="modal-image" class="modal-image" src="" alt="">
+                    <div class="modal-content">
+                        <h2 id="modal-title" class="modal-title"></h2>
+                        <div class="modal-meta">
+                            <div id="modal-location" class="modal-location">
+                                <span>📍</span>
+                                <span></span>
+                            </div>
+                            <div id="modal-date" class="modal-date">
+                                <span>📅</span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div id="modal-story" class="modal-story"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+}
 
 function loadCategoryStories() {
     const category = getCategoryFromUrl();
@@ -23,15 +50,11 @@ function loadCategoryStories() {
         return;
     }
     
-    // Show loading state
-    container.innerHTML = '<div style="text-align: center; padding: 20px;"><p>Loading stories...</p></div>';
+    container.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>Loading stories...</p></div>';
     
-    // Load stories using Edge Function
     supabase.getStories(category)
         .then(data => {
             const allStories = data.stories || [];
-            
-            // Filter stories by category
             const categoryStories = category ? 
                 allStories.filter(story => story.category === category) : 
                 allStories;
@@ -39,16 +62,15 @@ function loadCategoryStories() {
             const totalCount = categoryStories.length;
             const totalPages = Math.ceil(totalCount / storiesPerPage);
             
-            // Calculate pagination
             const startIndex = (currentPage - 1) * storiesPerPage;
             const endIndex = startIndex + storiesPerPage;
             const stories = categoryStories.slice(startIndex, endIndex);
             
             if (categoryStories.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                        <h3 style="color: #6c757d;">No stories yet!</h3>
-                        <p>Be the first to add a story to this category.</p>
+                    <div style="text-align: center; padding: 60px; grid-column: 1/-1; background: #f8f9fa; border-radius: 12px;">
+                        <h3 style="color: #6c757d; margin-bottom: 10px;">No stories yet!</h3>
+                        <p style="color: #999;">Be the first to add a story to this category.</p>
                     </div>
                 `;
                 hidePagination();
@@ -56,49 +78,139 @@ function loadCategoryStories() {
             }
             
             if (stories.length === 0 && totalPages > 0) {
-                // Page doesn't exist, redirect to last available page
                 window.location.href = updatePageInUrl(totalPages);
                 return;
             }
             
-            // Generate HTML for stories
+            // Generate story cards
             const storiesHTML = stories.map(story => `
-                <div class="places">
-                    ${story.image_url ? `<img src="${story.image_url}" alt="${escapeHtml(story.title)}" onerror="this.style.display='none'">` : ''}
-                </div>
-                <div class="story">
-                    <h2>${escapeHtml(story.title)}</h2>
-                    <p>${escapeHtml(story.story_content)}</p>
-                    ${story.location ? `<p style="color: #007bff; font-style: italic;"><strong>📍 ${escapeHtml(story.location)}</strong></p>` : ''}
-                    ${story.travel_date ? `<p style="color: #6c757d; font-size: 0.9em;">📅 ${story.travel_date}</p>` : ''}
+                <div class="story-card" onclick="openModal(${story.id})">
+                    ${story.image_url ? 
+                        `<img src="${story.image_url}" alt="${escapeHtml(story.title)}" class="story-card-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K'">` : 
+                        `<div class="story-card-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">📝</div>`
+                    }
+                    <div class="story-card-content">
+                        <h3 class="story-card-title">${escapeHtml(story.title)}</h3>
+                        <p class="story-card-preview">${escapeHtml(story.story_content)}</p>
+                        <div class="story-card-meta">
+                            ${story.location ? 
+                                `<div class="story-card-location">
+                                    <span>📍</span>
+                                    <span>${escapeHtml(story.location)}</span>
+                                </div>` : '<div></div>'
+                            }
+                            ${story.travel_date ? 
+                                `<div class="story-card-date">
+                                    <span>📅</span>
+                                    <span>${story.travel_date}</span>
+                                </div>` : ''
+                            }
+                        </div>
+                    </div>
                 </div>
             `).join('');
             
             container.innerHTML = storiesHTML;
-            
-            // Update and show pagination
             updatePagination(totalPages, totalCount);
             
         })
         .catch(error => {
             console.error('Error loading stories:', error);
             container.innerHTML = `
-                <div style="text-align: center; padding: 20px; background: #f8d7da; border-radius: 8px; margin: 20px 0; color: #721c24;">
+                <div style="text-align: center; padding: 40px; grid-column: 1/-1; background: #f8d7da; border-radius: 12px; color: #721c24;">
                     <p>Unable to load stories. Please check your connection and try again.</p>
-                    <p style="font-size: 0.9em;">Error: ${error.message}</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">Error: ${error.message}</p>
                 </div>
             `;
             hidePagination();
         });
 }
 
+function openModal(storyId) {
+    const category = getCategoryFromUrl();
+    
+    supabase.getStories(category)
+        .then(data => {
+            const allStories = data.stories || [];
+            const story = allStories.find(s => s.id === storyId);
+            
+            if (!story) return;
+            
+            // Populate modal content
+            const modal = document.getElementById('story-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            const modalLocation = document.getElementById('modal-location');
+            const modalDate = document.getElementById('modal-date');
+            const modalStory = document.getElementById('modal-story');
+            
+            // Set image
+            if (story.image_url) {
+                modalImage.src = story.image_url;
+                modalImage.alt = escapeHtml(story.title);
+                modalImage.style.display = 'block';
+            } else {
+                modalImage.style.display = 'none';
+            }
+            
+            // Set title
+            modalTitle.textContent = story.title;
+            
+            // Set location
+            if (story.location) {
+                modalLocation.style.display = 'flex';
+                modalLocation.querySelector('span:last-child').textContent = story.location;
+            } else {
+                modalLocation.style.display = 'none';
+            }
+            
+            // Set date
+            if (story.travel_date) {
+                modalDate.style.display = 'flex';
+                modalDate.querySelector('span:last-child').textContent = story.travel_date;
+            } else {
+                modalDate.style.display = 'none';
+            }
+            
+            // Set story content
+            modalStory.textContent = story.story_content;
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        })
+        .catch(error => {
+            console.error('Error loading story:', error);
+            alert('Unable to load story. Please try again.');
+        });
+}
+
+function closeModal() {
+    const modal = document.getElementById('story-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close modal when clicking backdrop
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'story-modal') {
+        closeModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
 function setupPagination() {
-    // Create pagination container if it doesn't exist
     if (!document.getElementById('pagination-container')) {
         const container = document.getElementById('dynamic-stories-container');
         const paginationHTML = `
-            <div id="pagination-container" style="text-align: center; margin: 30px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none;">
-                <div id="page-info" style="margin-bottom: 15px; color: #6c757d; font-size: 0.9em;"></div>
+            <div id="pagination-container" style="display: none;">
+                <div id="page-info"></div>
                 <div id="pagination-controls"></div>
             </div>
         `;
@@ -116,15 +228,13 @@ function updatePagination(totalPages, totalCount) {
         return;
     }
     
-    // Show pagination container
     container.style.display = 'block';
     
-    // Generate pagination controls
     let paginationHTML = '';
     
     // Previous button
     if (currentPage > 1) {
-        paginationHTML += `<button onclick="changePage(${currentPage - 1})" style="background: #007bff; color: white; border: none; padding: 8px 12px; margin: 0 5px; border-radius: 4px; cursor: pointer;">&laquo; Previous</button>`;
+        paginationHTML += `<button onclick="changePage(${currentPage - 1})">&laquo; Prev</button>`;
     }
     
     // Page numbers
@@ -132,30 +242,27 @@ function updatePagination(totalPages, totalCount) {
     const endPage = Math.min(totalPages, currentPage + 2);
     
     if (startPage > 1) {
-        paginationHTML += `<button onclick="changePage(1)" style="background: white; color: #007bff; border: 1px solid #007bff; padding: 8px 12px; margin: 0 2px; border-radius: 4px; cursor: pointer;">1</button>`;
+        paginationHTML += `<button onclick="changePage(1)">1</button>`;
         if (startPage > 2) {
-            paginationHTML += '<span style="margin: 0 5px; color: #6c757d;">...</span>';
+            paginationHTML += `<span style="padding: 8px;">...</span>`;
         }
     }
     
     for (let i = startPage; i <= endPage; i++) {
-        if (i === currentPage) {
-            paginationHTML += `<button style="background: #007bff; color: white; border: 1px solid #007bff; padding: 8px 12px; margin: 0 2px; border-radius: 4px; cursor: pointer;">${i}</button>`;
-        } else {
-            paginationHTML += `<button onclick="changePage(${i})" style="background: white; color: #007bff; border: 1px solid #007bff; padding: 8px 12px; margin: 0 2px; border-radius: 4px; cursor: pointer;">${i}</button>`;
-        }
+        const activeClass = i === currentPage ? 'active' : '';
+        paginationHTML += `<button class="${activeClass}" onclick="changePage(${i})">${i}</button>`;
     }
     
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
-            paginationHTML += '<span style="margin: 0 5px; color: #6c757d;">...</span>';
+            paginationHTML += `<span style="padding: 8px;">...</span>`;
         }
-        paginationHTML += `<button onclick="changePage(${totalPages})" style="background: white; color: #007bff; border: 1px solid #007bff; padding: 8px 12px; margin: 0 2px; border-radius: 4px; cursor: pointer;">${totalPages}</button>`;
+        paginationHTML += `<button onclick="changePage(${totalPages})">${totalPages}</button>`;
     }
     
     // Next button
     if (currentPage < totalPages) {
-        paginationHTML += `<button onclick="changePage(${currentPage + 1})" style="background: #007bff; color: white; border: none; padding: 8px 12px; margin: 0 5px; border-radius: 4px; cursor: pointer;">Next &raquo;</button>`;
+        paginationHTML += `<button onclick="changePage(${currentPage + 1})">Next &raquo;</button>`;
     }
     
     controls.innerHTML = paginationHTML;
@@ -163,7 +270,7 @@ function updatePagination(totalPages, totalCount) {
     // Update page info
     const startItem = (currentPage - 1) * storiesPerPage + 1;
     const endItem = Math.min(currentPage * storiesPerPage, totalCount);
-    pageInfo.innerHTML = `Showing ${startItem}-${endItem} of ${totalCount} stories | Page ${currentPage} of ${totalPages}`;
+    pageInfo.innerHTML = `Showing ${startItem}-${endItem} of ${totalCount} stories`;
 }
 
 function hidePagination() {
@@ -175,7 +282,6 @@ function hidePagination() {
 
 function changePage(newPage) {
     currentPage = newPage;
-    // Update URL without page reload
     window.location.href = updatePageInUrl(newPage);
 }
 
@@ -200,6 +306,8 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Export functions for use in HTML
+// Export functions
 window.loadCategoryStories = loadCategoryStories;
 window.changePage = changePage;
+window.openModal = openModal;
+window.closeModal = closeModal;
