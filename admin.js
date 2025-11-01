@@ -1,8 +1,7 @@
-// admin.js - Fixed & Fully Working Admin Panel (Patched with proxy image + fallback)
-
+// admin.js - FINAL WORKING VERSION
 let currentUser = null;
 
-// On page load: restore session
+// === DOM LOADED ===
 document.addEventListener('DOMContentLoaded', function () {
     const saved = localStorage.getItem('myVoyagesAdminUser');
     if (saved) {
@@ -17,6 +16,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+// === EXPORT ALL FUNCTIONS TO WINDOW FIRST ===
+window.login = login;
+window.logout = logout;
+window.showAddForm = showAddForm;
+window.hideAddForm = hideAddForm;
+window.convertGoogleDriveUrl = convertGoogleDriveUrl;
+window.addStory = addStory;
+window.loadStories = loadStories;
+window.editStory = editStory;
+window.updateStory = updateStory;
+window.deleteStory = deleteStory;
+
+// === DEFINE ALL FUNCTIONS (IN ORDER) ===
 
 async function login() {
     const username = document.getElementById('username').value.trim();
@@ -62,7 +75,6 @@ function showAddForm() {
     document.getElementById('add-error').style.display = 'none';
     document.getElementById('add-success').style.display = 'none';
 
-    // Reset form
     document.getElementById('story-title').value = '';
     document.getElementById('story-category').value = 'local';
     document.getElementById('story-content').value = '';
@@ -76,7 +88,6 @@ function hideAddForm() {
     document.getElementById('add-story-form').classList.add('hidden');
 }
 
-// Convert Google Drive URL
 function getDirectGoogleDriveUrl(driveUrl) {
     driveUrl = driveUrl.trim();
     if (driveUrl.includes("uc?export=view")) return driveUrl;
@@ -154,11 +165,8 @@ async function addStory() {
         showError(errorDiv, 'Failed to add: ' + error.message);
     }
 }
-window.addStory = addStory;
-window.editStory = editStory;
-window.updateStory = updateStory;
-window.deleteStory = deleteStory;
 
+// === FINAL loadStories() — NO escapeHtml() ON BUTTONS ===
 async function loadStories() {
     const container = document.getElementById('stories-container');
     container.innerHTML = '<p>Loading stories...</p>';
@@ -172,18 +180,17 @@ async function loadStories() {
             return;
         }
 
-        // === BUILD HTML WITHOUT escapeHtml() ON BUTTONS ===
         container.innerHTML = stories.map(story => {
             const imageUrl = story.image_url
                 ? supabase.getProxyImageUrl(story.image_url)
                 : null;
 
-            // Escape only text
-            const title = story.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const location = story.location ? story.location.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '—';
+            // === SAFE ESCAPE FOR TEXT ONLY ===
+            const safe = (str) => str ? String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '';
+            const title = safe(story.title);
+            const location = safe(story.location) || '—';
             const date = story.travel_date || '—';
-            const preview = story.story_content.substring(0, 120).replace(/</g, '&lt;').replace(/>/g, '&gt;') +
-                           (story.story_content.length > 120 ? '...' : '');
+            const preview = safe(story.story_content.substring(0, 120)) + (story.story_content.length > 120 ? '...' : '');
 
             return `
                 <div class="story-card" data-id="${story.id}">
@@ -208,12 +215,6 @@ async function loadStories() {
         container.innerHTML = `<p style="color:#dc3545;">Error: ${error.message}</p>`;
     }
 }
-window.login = login;
-window.logout = logout;
-window.showAddForm = showAddForm;
-window.hideAddForm = hideAddForm;
-window.convertGoogleDriveUrl = convertGoogleDriveUrl;
-window.loadStories = loadStories;
 
 function editStory(id) {
     const card = document.querySelector(`.story-card[data-id="${id}"]`);
@@ -224,68 +225,55 @@ function editStory(id) {
     const date = card.querySelector('p:nth-of-type(2)').textContent.replace('Date: ', '').trim();
     const preview = card.querySelector('p:nth-of-type(3)').textContent;
     const fullContent = preview.endsWith('...') 
-        ? prompt('Full story content (paste from modal or DB):', '') 
+        ? prompt('Full story content (copy from modal or DB):', '') 
         : preview;
 
-    // Fill form
     document.getElementById('story-title').value = title;
     document.getElementById('story-location').value = location === '—' ? '' : location;
     document.getElementById('story-date').value = date === '—' ? '' : date;
     document.getElementById('story-content').value = fullContent || '';
 
-    // Change button
     const addBtn = document.querySelector('#add-story-form .btn');
     addBtn.textContent = 'Update Story';
     addBtn.onclick = () => updateStory(id);
 
     showAddForm();
 }
+
 async function updateStory(id) {
-    if (!currentUser) {
-        alert("Please log in again");
-        return;
-    }
+    if (!currentUser) return alert("Login again");
 
     const title = document.getElementById('story-title').value.trim();
-    const category = document.getElementById('story-category').value;
     const content = document.getElementById('story-content').value.trim();
-    const imageUrl = document.getElementById('story-image').value.trim();
-    const location = document.getElementById('story-location').value.trim();
-    const date = document.getElementById('story-date').value;
-
-    if (!title || !content) {
-        showError(document.getElementById('add-error'), 'Title and content required');
-        return;
-    }
+    if (!title || !content) return showError(document.getElementById('add-error'), 'Title & content required');
 
     const storyData = {
-        title, category, story_content: content,
-        image_url: imageUrl || null,
-        location: location || null,
-        travel_date: date || null
+        title,
+        category: document.getElementById('story-category').value,
+        story_content: content,
+        image_url: document.getElementById('story-image').value.trim() || null,
+        location: document.getElementById('story-location').value.trim() || null,
+        travel_date: document.getElementById('story-date').value || null
     };
 
     try {
         await supabase.updateStory(id, storyData, currentUser);
-        showSuccess(document.getElementById('add-success'), 'Story updated!');
+        showSuccess(document.getElementById('add-success'), 'Updated!');
         hideAddForm();
-        await loadStories();
+        loadStories();
     } catch (error) {
         showError(document.getElementById('add-error'), 'Update failed: ' + error.message);
     }
 }
+
 async function deleteStory(id) {
     if (!confirm('Delete this story permanently?')) return;
-
-    if (!currentUser?.username || !currentUser?.password) {
-        alert("Please log in again");
-        return;
-    }
+    if (!currentUser) return alert("Login again");
 
     try {
         await supabase.deleteStory(id, currentUser);
-        alert('Story deleted!');
-        await loadStories();
+        alert('Deleted!');
+        loadStories();
     } catch (error) {
         alert('Delete failed: ' + error.message);
     }
@@ -302,10 +290,4 @@ function showSuccess(element, message) {
     setTimeout(() => element.style.display = 'none', 3000);
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Export to window
+// === NO escapeHtml() FUNCTION — DELETED ===
