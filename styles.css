@@ -211,12 +211,12 @@ body {
     visibility: visible;
 }
 
+/* Default/Mobile Layout (Vertical) */
 .story-modal {
     background: white;
     border-radius: 20px;
-    width: 75vw;
-    max-width: 1200px;
-    height: 75vh;
+    width: 95vw;
+    height: 95vh;
     max-height: 900px;
     overflow: hidden;
     transform: scale(0.9);
@@ -225,7 +225,7 @@ body {
     position: relative;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Vertical layout for mobile */
 }
 
 .modal-backdrop.active .story-modal {
@@ -256,16 +256,17 @@ body {
     transform: rotate(90deg);
 }
 
+/* Mobile Layout (Vertical) */
 .modal-image {
     width: 100%;
-    height: 40%; /* 40% of modal height */
-    min-height: 300px; /* Minimum height */
+    height: 35%; /* 35% of modal height */
+    min-height: 200px; /* Minimum height */
     object-fit: cover;
     background: #f0f0f0;
 }
 
 .modal-content {
-    padding: 25px;
+    padding: 20px;
     flex: 1; /* Take remaining space */
     overflow-y: auto;
     display: flex;
@@ -273,7 +274,7 @@ body {
 }
 
 .modal-title {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 600;
     color: #333;
     margin: 0 0 15px 0;
@@ -301,10 +302,11 @@ body {
 .modal-story {
     color: #444;
     line-height: 1.8;
-    font-size: 18px;
+    font-size: 16px;
     white-space: pre-wrap;
     flex: 1;
 }
+
 
 /* Pagination Styles */
 #pagination-container {
@@ -495,7 +497,7 @@ footer {
     }
 
     .modal-backdrop {
-        padding: 15px;
+        padding: 20px;
     }
 
     .story-card {
@@ -507,9 +509,10 @@ footer {
     }
 
     .story-modal {
-        flex-direction: row;
+        width: 75vw;
         height: 80vh;
         max-height: 800px;
+        flex-direction: row; 
     }
 
     .modal-image {
@@ -525,10 +528,13 @@ footer {
     }
 
     .modal-title {
-        font-size: 22px;
+        font-size: 24px;
     }
 
     .modal-story {
+        font-size: 18px;
+    }
+    .modal-location, .modal-date {
         font-size: 16px;
     }
 
@@ -539,7 +545,7 @@ footer {
 }
 
 @media only screen and (max-width: 480px) {
-    .tours, .tours_home {
+    /* .tours, .tours_home {
         grid-template-columns: 1fr;
         gap: 15px;
     }
@@ -550,7 +556,7 @@ footer {
 
     .story-card-image {
         height: 140px;
-    }
+    } */
     .modal-backdrop {
         padding: 10px;
     }
@@ -562,19 +568,19 @@ footer {
     
     .modal-image {
         height: 35%;
-        min-height: 200px;
+        min-height: 150px;
     }
     
     .modal-content {
-        padding: 20px;
+        padding: 15px;
     }
     
     .modal-title {
-        font-size: 22px;
+        font-size: 20px;
     }
     
     .modal-story {
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .modal-location, .modal-date {
