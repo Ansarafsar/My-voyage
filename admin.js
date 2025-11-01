@@ -173,11 +173,18 @@ async function loadStories() {
                 ? supabase.getProxyImageUrl(story.image_url)
                 : null;
 
+            // Escape only text, NOT HTML
+            const safeTitle = escapeHtml(story.title);
+            const safeLocation = escapeHtml(story.location || '—');
+            const safeDate = story.travel_date || '—';
+            const safePreview = escapeHtml(story.story_content.substring(0, 120)) + 
+                               (story.story_content.length > 120 ? '...' : '');
+
             return `
                 <div class="story-card" data-id="${story.id}">
                     ${imageUrl
                         ? `<img src="${imageUrl}" 
-                                 alt="${escapeHtml(story.title)}" 
+                                 alt="${safeTitle}" 
                                  onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMwMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjRjBGMEMwIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0xMzcuNSA5My43NUwxNTAgMTA2LjI1TDE2Mi41IDkzLjc1TDE3NSA4MS4yNUwxNjIuNSA2OC43NUwxNTAgODEuMjVMMTM3LjUgNjguNzVMMTI1IDgxLjI1TDEzNy41IDkzLjc1WiIgZmlsbD0iI0NDQyIvPgo8L3N2Zz4K';"
                                  style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">`
                         : `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -186,15 +193,15 @@ async function loadStories() {
                              Document
                            </div>`
                     }
-                    <h4 style="margin: 0 0 8px 0; font-size: 1.1em; color: #333;">${escapeHtml(story.title)}</h4>
+                    <h4 style="margin: 0 0 8px 0; font-size: 1.1em; color: #333;">${safeTitle}</h4>
                     <p style="margin: 4px 0; font-size: 0.9em; color: #555;">
-                        <strong>Location:</strong> ${escapeHtml(story.location || '—')}
+                        <strong>Location:</strong> ${safeLocation}
                     </p>
                     <p style="margin: 4px 0; font-size: 0.9em; color: #555;">
-                        <strong>Date:</strong> ${story.travel_date || '—'}
+                        <strong>Date:</strong> ${safeDate}
                     </p>
                     <p style="margin: 8px 0; font-size: 0.85em; color: #666; line-height: 1.4;">
-                        ${escapeHtml(story.story_content.substring(0, 120))}${story.story_content.length > 120 ? '...' : ''}
+                        ${safePreview}
                     </p>
                     <div style="margin-top: 12px; display: flex; gap: 8px;">
                         <button class="btn btn-secondary" onclick="editStory(${story.id})">Edit</button>
