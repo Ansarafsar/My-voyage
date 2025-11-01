@@ -308,6 +308,7 @@ body {
 }
 
 
+
 /* Pagination Styles */
 #pagination-container {
     text-align: center;
@@ -459,7 +460,7 @@ footer {
 }
 
 /* Responsive Styles */
-@media only screen and (max-width: 768px) {
+/* @media only screen and (max-width: 768px) {
     .menu-icon {
         display: block;
     }
@@ -542,9 +543,9 @@ footer {
         padding: 6px 10px;
         font-size: 12px;
     }
-}
+} */
 
-@media only screen and (max-width: 480px) {
+/*@media only screen and (max-width: 480px) {
     /* .tours, .tours_home {
         grid-template-columns: 1fr;
         gap: 15px;
@@ -556,7 +557,7 @@ footer {
 
     .story-card-image {
         height: 140px;
-    } */
+    } 
     .modal-backdrop {
         padding: 10px;
     }
@@ -568,6 +569,37 @@ footer {
     
     .modal-image {
         height: 35%;
+        min-height: 150px;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .modal-title {
+        font-size: 20px;
+    }
+    
+    .modal-story {
+        font-size: 15px;
+    }
+    
+    .modal-location, .modal-date {
+        font-size: 14px;
+    }
+}*/
+@media only screen and (max-width: 480px) {
+    .modal-backdrop {
+        padding: 10px;
+    }
+    
+    .story-modal {
+        width: 95vw;
+        height: 95vh;
+    }
+    
+    .modal-image {
+        height: 30%;
         min-height: 150px;
     }
     
