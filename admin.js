@@ -167,6 +167,7 @@ async function addStory() {
 }
 
 // === FINAL loadStories() — NO escapeHtml() ON BUTTONS ===
+// In admin.js, modify the loadStories function
 async function loadStories() {
     const container = document.getElementById('stories-container');
     container.innerHTML = '<p>Loading stories...</p>';
@@ -204,7 +205,7 @@ async function loadStories() {
                     <p style="margin:4px 0;font-size:0.9em;color:#555;"><strong>Location:</strong> ${location}</p>
                     <p style="margin:4px 0;font-size:0.9em;color:#555;"><strong>Date:</strong> ${date}</p>
                     <p style="margin:8px 0;font-size:0.85em;color:#666;line-height:1.4;">${preview}</p>
-                    <div style="margin-top:12px;display:flex;gap:8px;">
+                    <div style="margin-top:12px;display:flex;gap:8px;position:relative;z-index:10;">
                         <button class="btn btn-secondary" onclick="editStory(${story.id})">Edit</button>
                         <button class="btn" onclick="deleteStory(${story.id})" style="background:#dc3545;">Delete</button>
                     </div>
